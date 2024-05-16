@@ -9,6 +9,10 @@ import (
 	"strconv"
 )
 
+var (
+	appVersion = "dev"
+)
+
 const (
 	defaultPort     = 8080
 	portEnvVariable = "PORT"
@@ -17,10 +21,16 @@ const (
 func main() {
 	port := selectPort()
 	http.HandleFunc("/", showIP)
+	http.HandleFunc("/version", showVersion)
 	log.Printf("starting server on %s\n", port)
 	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func showVersion(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	io.WriteString(w, fmt.Sprintf("app version: %s", appVersion))
 }
 
 func showIP(w http.ResponseWriter, r *http.Request) {
