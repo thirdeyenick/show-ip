@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	appVersion = "dev"
+	appVersion = "trunc"
 )
 
 const (
