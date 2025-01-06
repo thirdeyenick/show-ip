@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM golang:1.21 as build
+ARG APP_VERSION="0.0.1-dockerbuild"
+FROM golang:1.21 AS build
 
 WORKDIR /go/src/app
 COPY . .
@@ -7,7 +8,8 @@ COPY . .
 RUN go mod download
 RUN go test -v
 
-RUN CGO_ENABLED=0 go build -o /go/bin/app -ldflags="-X 'main.appVersion=0.0.1-dockerbuild'"
+ARG APP_VERSION
+RUN CGO_ENABLED=0 go build -o /go/bin/app -ldflags="-X 'main.appVersion=${APP_VERSION}'"
 
 FROM gcr.io/distroless/static-debian11
 
