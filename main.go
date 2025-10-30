@@ -34,7 +34,16 @@ func showVersion(w http.ResponseWriter, r *http.Request) {
 }
 
 func showIP(w http.ResponseWriter, r *http.Request) {
-	resp, err := http.Get("https://ifconfig.me")
+	req, err := http.NewRequest(http.MethodGet, "https://ifconfig.me", nil)
+	if err != nil {
+		log.Printf("can not create new HTTP request: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// we set "curl" as the user agent, as the response will just be the
+	// plain IP then. Otherwise it will be a full HTML page.
+	req.Header.Set("User-Agent", "curl")
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, fmt.Sprintf("error on gathering public IP: %v", err))
