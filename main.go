@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 var (
@@ -22,6 +23,18 @@ func main() {
 	port := selectPort()
 	http.HandleFunc("/", showIP)
 	http.HandleFunc("/version", showVersion)
+	var delayStart time.Duration = 0
+	if givenDelay := os.Getenv("DELAY_START"); givenDelay != "" {
+		var err error
+		delayStart, err = time.ParseDuration(givenDelay)
+		if err != nil {
+			log.Fatal(fmt.Errorf("error when parsing DELAY_START env var: %v", err))
+		}
+	}
+	if delayStart > 0 {
+		log.Printf("delaying start by %s", delayStart.String())
+		time.Sleep(delayStart)
+	}
 	log.Printf("starting server on %s\n", port)
 	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatal(err)
