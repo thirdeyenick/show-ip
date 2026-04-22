@@ -8,7 +8,7 @@ COPY . .
 RUN go mod download
 RUN go test -v
 
-ARG APP_VERSION
+ARG DEPLOIO_GIT_REVISION
 RUN CGO_ENABLED=0 go build -o /go/bin/app -ldflags="-X 'main.appVersion=${DEPLOIO_GIT_REVISION}'"
 
 FROM gcr.io/distroless/static-debian12
